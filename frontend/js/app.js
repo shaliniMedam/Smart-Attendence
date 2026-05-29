@@ -208,7 +208,7 @@ async function registerStudent() {
         const data = await response.json();
         
         if (data.success) {
-            showAlert('Student registered successfully!', 'success');
+            showAlert('Employee registered successfully!', 'success');
             // Reset form
             document.getElementById('regName').value = '';
             document.getElementById('regRoll').value = '';
@@ -224,7 +224,7 @@ async function registerStudent() {
         showAlert('Network error. Is the server running?', 'error');
     } finally {
         submitBtn.disabled = false;
-        submitBtn.innerHTML = '✅ Register Student';
+        submitBtn.innerHTML = '✅ Register Employee';
     }
 }
 
@@ -359,7 +359,7 @@ async function loadStudents() {
         tbody.innerHTML = '';
         
         if (data.students.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem;">No students registered yet</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem;">No employees registered yet</td></tr>';
             return;
         }
         
@@ -386,13 +386,13 @@ async function loadStudents() {
             tbody.appendChild(row);
         });
     } catch (error) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);">Failed to load students</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);">Failed to load employees</td></tr>';
     }
 }
 
 // ===== Delete Student =====
 async function deleteStudent(studentId) {
-    if (!confirm('Are you sure you want to delete this student and all their attendance records?')) {
+    if (!confirm('Are you sure you want to delete this employee and all their attendance records?')) {
         return;
     }
     
@@ -403,13 +403,13 @@ async function deleteStudent(studentId) {
         const data = await response.json();
         
         if (data.success) {
-            showAlert('Student deleted successfully', 'success');
+            showAlert('Employee deleted successfully', 'success');
             loadStudents();
         } else {
-            showAlert(data.message || 'Failed to delete student', 'error');
+            showAlert(data.message || 'Failed to delete employee', 'error');
         }
     } catch (error) {
-        showAlert('Network error. Failed to delete student.', 'error');
+        showAlert('Network error. Failed to delete employee.', 'error');
     }
 }
 

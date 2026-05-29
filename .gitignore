@@ -1,0 +1,12 @@
+venv/
+backend/__pycache__/
+backend/temp/
+backend/attendance.db
+known_faces/*
+!known_faces/.gitkeep
+audit_photos/*
+!audit_photos/.gitkeep
+attendance_logs/*
+!attendance_logs/.gitkeep
+attendence_logs/*
+!attendence_logs/.gitkeep

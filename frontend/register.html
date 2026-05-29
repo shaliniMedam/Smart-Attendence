@@ -8,7 +8,7 @@
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Student - Smart Attendance</title>
+    <title>Register Employee - Smart Attendance</title>
     <link rel="stylesheet" href="css/style.css?v=2">
 </head>
 <body>
@@ -31,7 +31,7 @@
     <div class="container">
         <div class="card" style="max-width: 800px; margin: 0 auto;">
             <div class="card-header">
-                <h2 class="card-title">📝 Register New Student</h2>
+                <h2 class="card-title">📝 Register New Employee</h2>
             </div>
 
             <!-- Camera Section -->
@@ -53,7 +53,7 @@
             <form id="registerForm" onsubmit="event.preventDefault(); registerStudent();" style="margin-top:2rem;">
                 <div class="form-group">
                     <label for="regName">Full Name *</label>
-                    <input type="text" id="regName" class="form-control" placeholder="Enter student's full name" required>
+                    <input type="text" id="regName" class="form-control" placeholder="Enter employee's full name" required>
                 </div>
 
                 <div class="form-group">
@@ -63,11 +63,11 @@
 
                 <div class="form-group">
                     <label for="regEmail">Email</label>
-                    <input type="email" id="regEmail" class="form-control" placeholder="student@example.com">
+                    <input type="email" id="regEmail" class="form-control" placeholder="employee@example.com">
                 </div>
 
                 <button type="submit" id="submitRegBtn" class="btn btn-primary" style="width:100%;">
-                    ✅ Register Student
+                    ✅ Register Employee
                 </button>
             </form>
         </div>
@@ -75,7 +75,7 @@
         <!-- Registered Students -->
         <div class="card" style="margin-top:2rem;">
             <div class="card-header">
-                <h2 class="card-title">👥 Registered Students</h2>
+                <h2 class="card-title">👥 Registered Employees</h2>
             </div>
             <div class="table-container">
                 <table class="data-table">
@@ -91,7 +91,7 @@
                     <tbody id="studentsTableBody">
                         <tr>
                             <td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem;">
-                                Loading students...
+                                Loading employees...
                             </td>
                         </tr>
                     </tbody>
