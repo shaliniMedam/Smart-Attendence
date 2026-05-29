@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance History - Smart Attendance</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">🎓 Smart Attendance</div>
+        <ul class="sidebar-links">
+            <li><a href="index.html"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="register.html"><span class="icon">📝</span> Register</a></li>
+            <li><a href="attendance.html"><span class="icon">📸</span> Attendance</a></li>
+            <li><a href="history.html" class="active"><span class="icon">📅</span> History</a></li>
+        </ul>
+        <ul class="sidebar-links sidebar-bottom">
+            <li><a href="settings.html"><span class="icon">⚙️</span> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+    <div class="container">
+        <!-- Filters Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📅 Search Attendance Logs</h2>
+            </div>
+            
+            <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-end;margin-bottom:1rem;">
+                <div class="form-group" style="margin-bottom:0;min-width:150px;">
+                    <label for="filterType">Filter Type</label>
+                    <select id="filterType" class="form-control" onchange="toggleFilterType()">
+                        <option value="daily">Daily View</option>
+                        <option value="monthly">Monthly View</option>
+                    </select>
+                </div>
+                
+                <!-- Daily Date Picker -->
+                <div id="dailyPickerGroup" class="form-group" style="margin-bottom:0;flex:1;min-width:200px;">
+                    <label for="historyDate">Select Date</label>
+                    <input type="date" id="historyDate" class="form-control">
+                </div>
+                
+                <!-- Monthly Month Picker -->
+                <div id="monthlyPickerGroup" class="form-group" style="margin-bottom:0;flex:1;min-width:200px;display:none;">
+                    <label for="historyMonth">Select Month</label>
+                    <input type="month" id="historyMonth" class="form-control">
+                </div>
+                
+                <button class="btn btn-primary" onclick="loadHistory()">🔍 Filter Records</button>
+                <button class="btn btn-outline" onclick="exportHistoryCsv()">📥 Export to CSV</button>
+            </div>
+        </div>
+
+        <!-- History Records Table -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📋 Historical Records</h2>
+                <span id="rangeLabel" style="color: var(--gray); font-weight:600;"></span>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="7" style="text-align:center;color:#94a3b8;padding:2rem;">
+                                Select a date or month and click Filter to view logs.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <!-- Audit Modal -->
+    <div id="auditModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAuditModal()">×</button>
+            <h2 class="card-title">Detailed Audit Logs</h2>
+            <p id="auditModalSubtitle" style="color:var(--gray); margin-bottom:1rem;"></p>
+            <div id="auditTimeline" class="timeline"></div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Additional page initialization code
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set default date to today
+            const historyDateInput = document.getElementById('historyDate');
+            if (historyDateInput) {
+                historyDateInput.value = new Date().toISOString().split('T')[0];
+            }
+            
+            // Set default month to current month
+            const historyMonthInput = document.getElementById('historyMonth');
+            if (historyMonthInput) {
+                const now = new Date();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                historyMonthInput.value = `${now.getFullYear()}-${month}`;
+            }
+            
+            // Load initial daily history
+            loadHistory();
+        });
+        
+        function toggleFilterType() {
+            const filterType = document.getElementById('filterType').value;
+            const dailyGroup = document.getElementById('dailyPickerGroup');
+            const monthlyGroup = document.getElementById('monthlyPickerGroup');
+            
+            if (filterType === 'daily') {
+                dailyGroup.style.display = 'block';
+                monthlyGroup.style.display = 'none';
+            } else {
+                dailyGroup.style.display = 'none';
+                monthlyGroup.style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>

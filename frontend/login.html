@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - Smart Attendance</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-main);
+            min-height: 100vh;
+            margin: 0;
+            padding: 1rem;
+        }
+        .login-wrapper {
+            width: 100%;
+            max-width: 440px;
+        }
+        .login-card {
+            background: var(--bg-card);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .login-logo {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+        .login-subtitle {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+        .password-field-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .password-toggle-btn {
+            position: absolute;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--gray);
+            user-select: none;
+            outline: none;
+            padding: 0;
+        }
+        .error-message {
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            text-align: left;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <div class="login-card">
+            <div class="login-logo">🎓</div>
+            <h1 id="orgNameHeader" class="login-title">Smart Attendance</h1>
+            <p class="login-subtitle">Administrative Dashboard Login</p>
+            
+            <div id="errorMsg" class="error-message"></div>
+
+            <form onsubmit="event.preventDefault(); handleLogin();">
+                <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
+                    <label for="username" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Company Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter admin username" required autofocus>
+                </div>
+
+                <div class="form-group" style="text-align: left; margin-bottom: 1.5rem;">
+                    <label for="password" style="font-size: 0.9rem; margin-bottom: 0.5rem;">Admin Password</label>
+                    <div class="password-field-container">
+                        <input type="password" id="password" class="form-control" placeholder="••••••••" style="padding-right: 3rem;" required>
+                        <button type="button" class="password-toggle-btn" onclick="togglePassword()">
+                            <span id="eyeIcon">👁️</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.85rem 1.5rem; border-radius: 0.75rem; font-size: 1.05rem;">
+                    🔑 Login to Dashboard
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Load organization name dynamically from settings
+        document.addEventListener('DOMContentLoaded', async () => {
+            // If already logged in, redirect to dashboard
+            if (sessionStorage.getItem('isLoggedIn') === 'true') {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/settings`);
+                const data = await response.json();
+                if (data.success && data.settings) {
+                    document.getElementById('orgNameHeader').textContent = data.settings.org_name;
+                }
+            } catch (error) {
+                console.error('Error fetching organization name:', error);
+            }
+        });
+
+        // Toggle password visibility
+        void function() {
+            window.togglePassword = function() {
+                const passwordInput = document.getElementById('password');
+                const eyeIcon = document.getElementById('eyeIcon');
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    eyeIcon.textContent = '👁️‍🗨️';
+                } else {
+                    passwordInput.type = 'password';
+                    eyeIcon.textContent = '👁️';
+                }
+            };
+        }();
+
+        // Perform login verification
+        async function handleLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorMsg = document.getElementById('errorMsg');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            errorMsg.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '⏳ Logging in...';
+            
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    sessionStorage.setItem('isLoggedIn', 'true');
+                    window.location.href = 'index.html';
+                } else {
+                    errorMsg.textContent = data.message || 'Incorrect admin username or password. Please try again.';
+                    errorMsg.style.display = 'block';
+                }
+            } catch (error) {
+                errorMsg.textContent = 'Connection error. Make sure the backend server is running.';
+                errorMsg.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🔑 Login to Dashboard';
+            }
+        }
+    </script>
+</body>
+</html>

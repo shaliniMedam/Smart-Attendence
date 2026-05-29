@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Settings - Smart Attendance</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <style>
+        .setting-desc {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
+        }
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .slider-value {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.15rem;
+            min-width: 3rem;
+            text-align: right;
+        }
+        .slider-input {
+            flex: 1;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            transition: background 0.15s ease-in-out;
+        }
+        .slider-input::-webkit-slider-thumb:hover {
+            background: var(--primary-dark);
+        }
+        .maintenance-btn-grid {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .danger-zone {
+            border: 2px dashed rgba(239, 68, 68, 0.3);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            background: rgba(239, 68, 68, 0.02);
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">🎓 Smart Attendance</div>
+        <ul class="sidebar-links">
+            <li><a href="index.html"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="register.html"><span class="icon">📝</span> Register</a></li>
+            <li><a href="attendance.html"><span class="icon">📸</span> Attendance</a></li>
+            <li><a href="history.html"><span class="icon">📅</span> History</a></li>
+        </ul>
+        <ul class="sidebar-links sidebar-bottom">
+            <li><a href="settings.html" class="active"><span class="icon">⚙️</span> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+        <div class="container">
+            <!-- Settings Card -->
+            <div class="card" style="max-width: 800px; margin: 0 auto;">
+                <div class="card-header">
+                    <h2 class="card-title">⚙️ System Settings</h2>
+                    <span style="color: var(--gray);">Configure system preferences</span>
+                </div>
+
+                <form id="settingsForm" onsubmit="event.preventDefault(); saveSystemSettings();">
+                    <!-- Org Name -->
+                    <div class="form-group">
+                        <label for="orgName">Organization / School Name</label>
+                        <input type="text" id="orgName" class="form-control" placeholder="Enter school or organization name" required>
+                        <p class="setting-desc">This name will be displayed in the sidebar logo header across all pages.</p>
+                    </div>
+
+                    <!-- Company Username -->
+                    <div class="form-group">
+                        <label for="adminUsername">Company Username</label>
+                        <input type="text" id="adminUsername" class="form-control" placeholder="Enter admin username" required>
+                        <p class="setting-desc">The username required to log in to the administrative dashboard.</p>
+                    </div>
+
+                    <!-- Face Tolerance Slider -->
+                    <div class="form-group">
+                        <label for="tolerance">Face Recognition Tolerance</label>
+                        <div class="slider-container">
+                            <input type="range" id="tolerance" class="slider-input" min="0.1" max="0.9" step="0.05" oninput="updateToleranceLabel(this.value)">
+                            <span id="toleranceVal" class="slider-value">0.40</span>
+                        </div>
+                        <p class="setting-desc">
+                            Controls the matching strictness of DeepFace. 
+                            <strong>Lower value (e.g. 0.3)</strong> is stricter (less false matches but might miss some angles). 
+                            <strong>Higher value (e.g. 0.5)</strong> is more lenient.
+                        </p>
+                    </div>
+
+                    <!-- Expected Check-In Time -->
+                    <div class="form-group">
+                        <label for="expectedCheckInTime">Expected Check-In Time</label>
+                        <input type="time" id="expectedCheckInTime" class="form-control" required>
+                        <p class="setting-desc">Time by which students should check in.</p>
+                    </div>
+
+                    <!-- Expected Check-Out Time -->
+                    <div class="form-group">
+                        <label for="expectedCheckOutTime">Expected Check-Out Time</label>
+                        <input type="time" id="expectedCheckOutTime" class="form-control" required>
+                        <p class="setting-desc">Time by which students should check out.</p>
+                    </div>
+
+                    <!-- Scan Cooldown -->
+                    <div class="form-group">
+                        <label for="cooldown">Recognition Cooldown (seconds)</label>
+                        <input type="number" id="cooldown" class="form-control" min="1" max="10" step="1" required>
+                        <p class="setting-desc">How long the system waits between scanning frames during the attendance tracking flow.</p>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="form-group">
+                        <label for="newPassword">New Admin Password</label>
+                        <input type="password" id="newPassword" class="form-control" placeholder="Leave blank to keep current password">
+                        <p class="setting-desc">Enter a new password here if you want to change the administrative password.</p>
+                    </div>
+
+                    <button type="submit" id="saveSettingsBtn" class="btn btn-primary" style="width:100%; margin-top: 1rem;">
+                        💾 Save Settings
+                    </button>
+                </form>
+            </div>
+
+            <!-- Maintenance Settings Card -->
+            <div class="card" style="max-width: 800px; margin: 2rem auto;">
+                <div class="card-header">
+                    <h2 class="card-title">🛠️ System Maintenance</h2>
+                    <span style="color: var(--gray);">Manage data cache and persistence</span>
+                </div>
+
+                <p style="color: var(--gray); font-size: 0.95rem;">
+                    Perform maintenance operations on the DeepFace cache files and database records below.
+                </p>
+
+                <div class="maintenance-btn-grid">
+                    <button class="btn btn-outline" onclick="clearDeepFaceCache()">
+                        🧹 Clear DeepFace Cache
+                    </button>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="danger-zone">
+                    <h3 style="color: var(--danger); font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                        ⚠️ Danger Zone
+                    </h3>
+                    <p style="color: var(--gray); font-size: 0.85rem; margin-bottom: 1rem;">
+                        Once you reset the database, there is no going back. All registered students and logs will be permanently deleted.
+                    </p>
+                    <button class="btn btn-danger" onclick="triggerDatabaseReset()">
+                        🚨 Reset System Database
+                    </button>
+                </div>
+            </div>
+
+            <!-- Log Out Card -->
+            <div class="card" style="max-width: 800px; margin: 2rem auto;">
+                <div class="card-header">
+                    <h2 class="card-title">🚪 Sign Out</h2>
+                    <span style="color: var(--gray);">Exit admin dashboard session</span>
+                </div>
+                <p style="color: var(--gray); font-size: 0.95rem; margin-bottom: 1.5rem;">
+                    Sign out of the administrative session. You will be redirected to the login page.
+                </p>
+                <button class="btn btn-outline" style="border-color: var(--danger); color: var(--danger);" onclick="logoutUser()">
+                    🚪 Log Out
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        // Local setting helper
+        function updateToleranceLabel(val) {
+            document.getElementById('toleranceVal').textContent = parseFloat(val).toFixed(2);
+        }
+
+        // Initialize page configuration form fields
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load Settings Form values from loaded settings
+            const checkSettingsInterval = setInterval(() => {
+                if (window.appSettings) {
+                    clearInterval(checkSettingsInterval);
+                    document.getElementById('orgName').value = window.appSettings.org_name;
+                    document.getElementById('adminUsername').value = window.appSettings.admin_username || 'admin';
+                    document.getElementById('tolerance').value = window.appSettings.tolerance;
+                    updateToleranceLabel(window.appSettings.tolerance);
+                    document.getElementById('cooldown').value = window.appSettings.cooldown;
+                    document.getElementById('expectedCheckInTime').value = window.appSettings.expected_check_in_time || '09:00';
+                    document.getElementById('expectedCheckOutTime').value = window.appSettings.expected_check_out_time || '17:00';
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

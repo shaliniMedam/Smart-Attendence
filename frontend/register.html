@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Student - Smart Attendance</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">🎓 Smart Attendance</div>
+        <ul class="sidebar-links">
+            <li><a href="index.html"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="register.html" class="active"><span class="icon">📝</span> Register</a></li>
+            <li><a href="attendance.html"><span class="icon">📸</span> Attendance</a></li>
+            <li><a href="history.html"><span class="icon">📅</span> History</a></li>
+        </ul>
+        <ul class="sidebar-links sidebar-bottom">
+            <li><a href="settings.html"><span class="icon">⚙️</span> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+    <div class="container">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <div class="card-header">
+                <h2 class="card-title">📝 Register New Student</h2>
+            </div>
+
+            <!-- Camera Section -->
+            <div class="camera-container">
+                <video id="camera" autoplay playsinline></video>
+                <canvas id="captureCanvas" style="display:none;"></canvas>
+            </div>
+
+            <div class="camera-controls">
+                <button class="btn btn-primary" onclick="startCamera('camera')">📷 Start Camera</button>
+                <button class="btn btn-success" onclick="captureImage('camera', 'captureCanvas')">📸 Capture</button>
+                <button class="btn btn-danger" onclick="stopCamera()">⏹️ Stop</button>
+            </div>
+
+            <!-- Image Preview -->
+            <img id="imagePreview" class="preview-image" style="display:none;" alt="Preview">
+
+            <!-- Registration Form -->
+            <form id="registerForm" onsubmit="event.preventDefault(); registerStudent();" style="margin-top:2rem;">
+                <div class="form-group">
+                    <label for="regName">Full Name *</label>
+                    <input type="text" id="regName" class="form-control" placeholder="Enter student's full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regRoll">Roll Number *</label>
+                    <input type="text" id="regRoll" class="form-control" placeholder="Enter roll number" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="student@example.com">
+                </div>
+
+                <button type="submit" id="submitRegBtn" class="btn btn-primary" style="width:100%;">
+                    ✅ Register Student
+                </button>
+            </form>
+        </div>
+
+        <!-- Registered Students -->
+        <div class="card" style="margin-top:2rem;">
+            <div class="card-header">
+                <h2 class="card-title">👥 Registered Students</h2>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentsTableBody">
+                        <tr>
+                            <td colspan="5" style="text-align:center;color:#94a3b8;padding:2rem;">
+                                Loading students...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

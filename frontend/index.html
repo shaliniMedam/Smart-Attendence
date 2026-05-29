@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+        if (sessionStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Face Recognition Attendance</title>
+    <link rel="stylesheet" href="css/style.css?v=2">
+</head>
+<body>
+    <!-- Left Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">🎓 Smart Attendance</div>
+        <ul class="sidebar-links">
+            <li><a href="index.html" class="active"><span class="icon">📊</span> Dashboard</a></li>
+            <li><a href="register.html"><span class="icon">📝</span> Register</a></li>
+            <li><a href="attendance.html"><span class="icon">📸</span> Attendance</a></li>
+            <li><a href="history.html"><span class="icon">📅</span> History</a></li>
+        </ul>
+        <ul class="sidebar-links sidebar-bottom">
+            <li><a href="settings.html"><span class="icon">⚙️</span> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <div class="main-content">
+        <div class="container">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-info">
+                    <h3 id="totalStudents">0</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-info">
+                    <h3 id="presentToday">0</h3>
+                    <p>Present Today</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">❌</div>
+                <div class="stat-info">
+                    <h3 id="absentToday">0</h3>
+                    <p>Absent Today</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Today's Attendance -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">📋 Today's Attendance</h2>
+                <span id="currentDate" style="color: var(--gray);"></span>
+            </div>
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Roll Number</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align:center;color:#94a3b8;padding:2rem;">
+                                Loading...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">⚡ Quick Actions</h2>
+            </div>
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+                <a href="register.html" class="btn btn-primary">📝 Register New Student</a>
+                <a href="attendance.html" class="btn btn-success">📸 Mark Attendance</a>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <!-- Audit Modal -->
+    <div id="auditModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAuditModal()">×</button>
+            <h2 class="card-title">Detailed Audit Logs</h2>
+            <p id="auditModalSubtitle" style="color:var(--gray); margin-bottom:1rem;"></p>
+            <div id="liveness-status" class="alert" style="display:none; margin-top:1rem; font-weight:600;"></div>
+            <div id="recognitionResult" style="margin-top: 1rem; display:none;"></div>
+            <div id="auditTimeline" class="timeline"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    </script>
+    <script src="js/app.js"></script>
+</body>
+</html>
